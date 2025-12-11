@@ -47,7 +47,7 @@ class TodoController extends Controller
     public function update(Request $request, string $id)
     {
 
-        $todo = Todo::findOrFail($id);
+        $todo = Todo::find($id);
         if ($todo) {
             $todo->update($request->all());
             return response()->json(['message' => 'Record updated successfully', 'todo' => $todo]);
@@ -60,11 +60,25 @@ class TodoController extends Controller
     }
 
     /**
+     * Partially update the list.
+     */
+    public function edit(Request $request, string $id)
+    {
+        $todo = Todo::find($id);
+        if ($id) {
+            $todo->update($request->only(['title', 'description', 'is_completed']));
+            return response()->json(['message' => 'records updated successfully', 'todo' => $todo]);
+        } else {
+            return response()->json(['message' => 'List not found'], 404);
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $todo = Todo::findOrFail($id);
+        $todo = Todo::find($id);
         if ($todo) {
             $todo->delete();
             return response()->json("Record deleted successfully", 200);
